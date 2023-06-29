@@ -6,10 +6,24 @@ const SearchUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetch('https://reqres.in/api/users?page=2')
-      .then(response => response.json())
-      .then(data => setEmployees(data.data))
-      .catch(error => console.log(error));
+    const fetchData = async () => {
+      const allEmployees = [];
+
+      let page = 1;
+      let totalPages = 1;
+
+      while (page <= totalPages) {
+        const response = await fetch(`https://reqres.in/api/users?page=${page}`);
+        const data = await response.json();
+        allEmployees.push(...data.data);
+        totalPages = data.total_pages;
+        page++;
+      }
+
+      setEmployees(allEmployees);
+    };
+
+    fetchData().catch(error => console.log(error));
   }, []);
 
   const handleSearch = event => {
